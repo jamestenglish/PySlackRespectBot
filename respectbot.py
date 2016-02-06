@@ -1,7 +1,7 @@
 import random
 import logging
 
-logger = logging.getLevelName(__name__)
+logger = logging.getLogger(__name__)
 
 outputs = []
 crontable = []
