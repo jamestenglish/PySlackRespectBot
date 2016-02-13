@@ -1,5 +1,8 @@
 import random
 import logging
+import os
+from slackclient import SlackClient
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -60,9 +63,20 @@ titles = ["Superior Person",
           "His Excellency",
           "Eternal General Secretary of the Party"]
 
+token = os.environ["SLACK_TOKEN"]
+slack_client = SlackClient(token)
+result = slack_client.api_call('channels.list')
+general_channel_id = None
+if result:
+    result = result.decode("utf-8")
+    result = json.loads(result)
+
+    for channel in result['channels']:
+        if channel['name'].lower() == "general":
+            general_channel_id = channel['id']
 
 def process_message(data):
-    if data['type'] == 'message':
+    if data['type'] == 'message' and 'channel' in data and data['channel'] == general_channel_id:
         if 'bob' in data['text'] or '@U08CRJ648' in data['text']:
             title_found = False
             for title in titles:
